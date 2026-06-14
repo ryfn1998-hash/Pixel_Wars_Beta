@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixel Wars 全球官方版 (Beta測試版)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f0ff;
+            --neon-green: #39ff14;
+            --neon-red: #ff073a;
+            --glass-bg: rgba(10, 15, 26, 0.65);
+            --glass-border: rgba(0, 240, 255, 0.25);
+        }
+
+        body {
+            margin: 0;
+            background-color: #060913;
+            color: #e2e8f0;
+            font-family: 'Noto Sans TC', sans-serif;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            /* 背景加上微弱的高科技科幻幾何網格紋理 */
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05) 0%, transparent 80%),
+                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+        }
+        
+        /* 📊 左上角數據面板 - 高科技毛玻璃 */
+        #ui-stats {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 12px 18px;
+            border-radius: 14px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 10px rgba(0, 240, 255, 0.1);
+            z-index: 20;
+            font-size: 13px;
+            line-height: 1.6;
+            border: 1px solid var(--glass-border);
+            pointer-events: auto;
+            transition: all 0.3s ease;
+        }
+        #ui-stats:hover {
+            border-color: rgba(0, 240, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.5px;
+        }
+        .stat-item span[id] {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+        }
+        .dot-online {
+            width: 8px;
+            height: 8px;
+            background-color: var(--neon-green);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px var(--neon-green);
+            animation: pulse 2s infinite;
+        }
+        .dot-views {
+            width: 8px;
+            height: 8px;
+            background-color: var(--neon-blue);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        /* 👑 頂部中央控制面板 */
+        #ui-top {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+            width: 90%;
+            max-width: 500px;
+            background: rgba(10, 15, 26, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 10px 20px;
+            border-radius: 0 0 20px 20px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+            border-left: 1px solid rgba(0, 240, 255, 0.05);
+            border-right: 1px solid rgba(0, 240, 255, 0.05);
+        }
+        h1 { 
+            margin: 0; 
+            font-size: 21px; 
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            background: linear-gradient(180deg, #fff 0%, #00f0ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,240,255,0.3); 
+        }
+        p { 
+            margin: 6px 0 0 0; 
+            font-size: 12px; 
+            color: #8fa0dd; 
+            letter-spacing: 0.5px;
+            font-weight: bold;
+        }
+        
+        #timer {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            color: var(--neon-red);
+            text-shadow: 0 0 8px rgba(255, 7, 58, 0.6);
+            animation: warning-pulse 0.5s ease infinite alternate;
+            display: inline-block;
+            padding: 0 4px;
+        }
+
+        /* 🕹️ 遊戲畫布與視窗 */
+        #viewport {
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: grab;
+        }
+        #viewport:active { cursor: grabbing; }
+
+        #canvas-wrapper {
+            position: absolute;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.15), 0 0 20px rgba(0,0,0,0.8);
+            background-color: #ffffff;
+            background-image: 
+                linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
+            background-size: 10px 10px;
+            transform-origin: 0 0;
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        /* 🎨 底部調色盤 - 高科技槍色毛玻璃 */
+        #ui-bottom {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        .palette {
+            display: flex;
+            gap: 10px;
+            background: rgba(15, 22, 38, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 10px 20px;
+            border-radius: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 15px rgba(0, 240, 255, 0.15);
+            align-items: center;
+            border: 1px solid var(--glass-border);
+            transition: border-color 0.3s;
+        }
+        .palette:hover {
+            border-color: rgba(0, 240, 255, 0.45);
+        }
+        .color-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s, box-shadow 0.2s;
+        }
+        .color-btn:hover {
+            transform: scale(1.15);
+            border-color: rgba(255,255,255,0.6);
+        }
+        .color-btn.active {
+            border-color: #ffffff;
+            transform: scale(1.2);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.5), inset 0 0 4px rgba(0,0,0,0.5);
+        }
+        
+        .color-custom-label {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+            box-sizing: border-box;
+            display: block;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s, box-shadow 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        /* 給自訂色彩加上高科技旋轉炫光掃描效果 */
+        .color-custom-label::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%);
+            animation: sweep 3s infinite;
+        }
+        .color-custom-label:hover {
+            transform: scale(1.15);
+            border-color: rgba(255,255,255,0.6);
+        }
+        .color-custom-label.active {
+            border-color: #ffffff;
+            transform: scale(1.2);
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+        }
+        #custom-color-picker {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+            pointer-events: none;
+        }
+
+        /* 🔮 Discord 懸浮按鈕 - 賽博藍化 */
+        #discord-btn {
+            position: absolute;
+            bottom: 25px;
+            right: 25px;
+            width: 52px;
+            height: 52px;
+            background: rgba(88, 101, 242, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(88, 101, 242, 0.3), inset 0 0 10px rgba(255,255,255,0.2);
+            z-index: 20;
+            border: 1px solid rgba(88, 101, 242, 0.5);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+        }
+        #discord-btn:hover {
+            transform: scale(1.15) rotate(5deg);
+            background-color: rgba(88, 101, 242, 0.9);
+            box-shadow: 0 6px 25px rgba(88, 101, 242, 0.5), 0 0 15px rgba(0, 240, 255, 0.3);
+            border-color: var(--neon-blue);
+        }
+        #discord-btn svg {
+            width: 26px;
+            height: 26px;
+            fill: white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        /* 🎞️ 動畫擴充定義 */
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 8px var(--neon-green); opacity: 0.8; }
+            50% { transform: scale(1.1); box-shadow: 0 0 15px var(--neon-green); opacity: 1; }
+            100% { transform: scale(1); box-shadow: 0 0 8px var(--neon-green); opacity: 0.8; }
+        }
+        @keyframes warning-pulse {
+            from { transform: scale(1); opacity: 0.9; }
+            to { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 4px var(--neon-red)); }
+        }
+        @keyframes sweep {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+    <div id="ui-stats">
+        <div class="stat-item"><span class="dot-online"></span> 即時在線：<span id="online-count">0</span> 人</div>
+        <div class="stat-item"><span class="dot-views"></span> 總瀏覽量：<span id="view-count">0</span> 次</div>
+    </div>
+
+    <div id="ui-top">
+        <h1>Pixel Wars 像素戰爭 (Beta)</h1>
+        <p id="status">正在同步量子矩陣伺服器連線...</p>
+    </div>
+
+    <div id="viewport">
+        <div id="canvas-wrapper">
+            <canvas id="pixelCanvas"></canvas>
+        </div>
+    </div>
+
+    <div id="ui-bottom">
+        <div class="palette" id="palette">
+            <div class="color-btn active" style="background-color: #000000;" data-color="#000000"></div>
+            <div class="color-btn" style="background-color: #ffffff; border: 1px solid #7f8c8d;" data-color="#ffffff"></div>
+            <div class="color-btn" style="background-color: #e50000;" data-color="#e50000"></div>
+            <div class="color-btn" style="background-color: #00cc00;" data-color="#00cc00"></div>
+            <div class="color-btn" style="background-color: #0000e5;" data-color="#0000e5"></div>
+            <div class="color-btn" style="background-color: #f5f500;" data-color="#f5f500"></div>
+            <div class="color-btn" style="background-color: #a000a0;" data-color="#a000a0"></div>
+            <div class="color-btn" style="background-color: #00a0a0;" data-color="#00a0a0"></div>
+            
+            <label class="color-custom-label" id="custom-color-label" for="custom-color-picker" title="自訂色彩系統"></label>
+            <input type="color" id="custom-color-picker" value="#ff0000">
+        </div>
+    </div>
+
+    <a href="https://discord.gg/RSbvaExgfX" target="_blank" id="discord-btn" title="加入官方 Discord 頻道">
+        <svg viewBox="0 0 127.14 96.36">
+            <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.84-11.12,68.43,68.43,0,0,1-10.75-5.18c.91-.66,1.8-1.34,2.65-2a75.58,75.58,0,0,0,72.7,0c.85.69,1.74,1.37,2.65,2a68.43,68.43,0,0,1-10.75,5.18,74.37,74.37,0,0,0,6.84,11.12,105.73,105.73,0,0,0,31.6-18.83C129.56,49.63,123.63,26.83,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/>
+        </svg>
+    </a>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCBdgYtNIFl21qObobpNCVsovzrAoPPUv8",
+            authDomain: "my-pixel-wars.firebaseapp.com",
+            projectId: "my-pixel-wars",
+            storageBucket: "my-pixel-wars.firebasestorage.app",
+            messagingSenderId: "559903428145",
+            appId: "1:559903428145:web:2f9b3db4f56a1abb918f10",
+            measurementId: "G-Q378F75DH8",
+            databaseURL: "https://my-pixel-wars-default-rtdb.firebaseio.com"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const pixelsRef = db.ref('pixels');
+
+        const onlineCountEl = document.getElementById('online-count');
+        const viewCountEl = document.getElementById('view-count');
+
+        // 🛠️ 網頁端觸覺回饋模擬系統 (Haptic Feedback)
+        function triggerHaptic(type) {
+            if (navigator.vibrate) {
+                if (type === 'click') {
+                    navigator.vibrate(12); // 切換色彩時的輕微短震
+                } else if (type === 'success') {
+                    navigator.vibrate([20, 30, 20]); // 成功放置像素點的精密雙震
+                } else if (type === 'warning') {
+                    navigator.vibrate([60, 50, 60]); // 冷卻中點擊失敗的警示重震
+                }
+            }
+        }
+
+        db.ref('stats/totalViews').on('value', (snap) => {
+            if(snap.exists()) viewCountEl.innerText = snap.val();
+        });
+
+        db.ref('stats/totalViews').transaction((current) => (current || 0) + 1);
+
+        const connectionsRef = db.ref('stats/connections');
+        
+        connectionsRef.on('value', (snap) => {
+            onlineCountEl.innerText = snap.numChildren();
+        });
+
+        db.ref('.info/connected').on('value', (snapshot) => {
+            if (snapshot.val() === true) {
+                const myConnectionRef = connectionsRef.push();
+                myConnectionRef.onDisconnect().remove();
+                myConnectionRef.set(true);
+                updateStatusText();
+            } else {
+                statusText.innerText = "母艦核心斷線！正在重新建立安全傳輸鏈結...";
+            }
+        });
+
+        const viewport = document.getElementById('viewport');
+        const wrapper = document.getElementById('canvas-wrapper');
+        const canvas = document.getElementById('pixelCanvas');
+        const ctx = canvas.getContext('2d');
+        const palette = document.getElementById('palette');
+        const statusText = document.getElementById('status');
+        
+        const customColorPicker = document.getElementById('custom-color-picker');
+        const customColorLabel = document.getElementById('custom-color-label');
+
+        const MAP_SIZE = 500; 
+        const CELL_SIZE = 10;
+
+        wrapper.style.width = (MAP_SIZE * CELL_SIZE) + 'px';
+        wrapper.style.height = (MAP_SIZE * CELL_SIZE) + 'px';
+        canvas.width = MAP_SIZE;
+        canvas.height = MAP_SIZE;
+
+        ctx.imageSmoothingEnabled = false;
+
+        let scale = 1;         
+        let offsetX = 0;       
+        let offsetY = 0;       
+        let isDragging = false;
+        let startX, startY;
+        let touchStartDist = 0; 
+        let startScale = 1;
+        let isPanning = false;  
+        let selectedColor = '#000000';
+
+        const localMap = {}; 
+        let cooldownEndTime = 0;
+        
+        let renderRequested = false;
+        function requestRender() {
+            if (!renderRequested) {
+                renderRequested = true;
+                requestAnimationFrame(() => {
+                    renderRequested = false;
+                    render();
+                });
+            }
+        }
+
+        function centerCanvas() {
+            scale = Math.min(window.innerWidth, window.innerHeight) / (MAP_SIZE * CELL_SIZE) * 0.9;
+            offsetX = (window.innerWidth - (MAP_SIZE * CELL_SIZE) * scale) / 2;
+            offsetY = (window.innerHeight - (MAP_SIZE * CELL_SIZE) * scale) / 2;
+            requestRender();
+        }
+
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let key in localMap) {
+                const [x, y] = key.split(',').map(Number);
+                ctx.fillStyle = localMap[key];
+                ctx.fillRect(x, y, 1, 1);
+            }
+            if (scale > 0.8) {
+                wrapper.style.backgroundImage = `
+                    linear-gradient(to right, rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(0, 240, 255, 0.1) 1px, transparent 1px)
+                `;
+            } else {
+                wrapper.style.backgroundImage = `
+                    linear-gradient(to right, rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(0, 240, 255, 0.03) 1px, transparent 1px)
+                `;
+            }
+            wrapper.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+        }
+
+        pixelsRef.on('child_added', (snapshot) => {
+            const key = snapshot.key;
+            const data = snapshot.val();
+            const cleanKey = key.replace('x', '').replace('y', '').replace('_', ',');
+            localMap[cleanKey] = data.color;
+            requestRender();
+        });
+
+        pixelsRef.on('child_changed', (snapshot) => {
+            const key = snapshot.key;
+            const data = snapshot.val();
+            const cleanKey = key.replace('x', '').replace('y', '').replace('_', ',');
+            localMap[cleanKey] = data.color;
+            requestRender();
+        });
+
+        if (localStorage.getItem('pixelCooldownEnd')) {
+            cooldownEndTime = parseInt(localStorage.getItem('pixelCooldownEnd'), 10);
+        }
+
+        function startCooldown() {
+            cooldownEndTime = Date.now() + (3 * 1000);
+            localStorage.setItem('pixelCooldownEnd', cooldownEndTime);
+            updateStatusText();
+        }
+
+        function updateStatusText() {
+            const now = Date.now();
+            if (now < cooldownEndTime) {
+                const timeLeft = Math.ceil((cooldownEndTime - now) / 1000);
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                statusText.innerHTML = `系統冷卻中！請稍候 <span id="timer">${minutes}:${seconds < 10 ? '0' : ''}${seconds}</span>`;
+                setTimeout(updateStatusText, 1000);
+            } else {
+                statusText.innerText = "量子核心已就緒，可以點擊畫布注入像素點！";
+            }
+        }
+
+        function tryPlacePixel(clickX, clickY) {
+            if (Date.now() < cooldownEndTime) {
+                triggerHaptic('warning'); // 震動：冷卻失敗警告
+                alert(`量子核心冷卻中！請等待倒數結束。`);
+                return;
+            }
+            if (clickX >= 0 && clickX < MAP_SIZE && clickY >= 0 && clickY < MAP_SIZE) {
+                const dbKey = `x${clickX}_y${clickY}`;
+                pixelsRef.child(dbKey).set({
+                    color: selectedColor,
+                    timestamp: ServerValue.TIMESTAMP
+                }).then(() => {
+                    triggerHaptic('success'); // 震動：成功放置像素點
+                    startCooldown();
+                }).catch((error) => {
+                    console.error("傳輸失敗：", error);
+                });
+            }
+        }
+
+        const ServerValue = firebase.database.ServerValue;
+
+        viewport.addEventListener('mousedown', (e) => {
+            if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel) return;
+            isDragging = true;
+            isPanning = false;
+            startX = e.clientX - offsetX;
+            startY = e.clientY - offsetY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            isPanning = true;
+            offsetX = e.clientX - startX;
+            offsetY = e.clientY - startY;
+            requestRender();
+        });
+
+        window.addEventListener('mouseup', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            if (!isPanning) {
+                const clickX = Math.floor((e.clientX - offsetX) / (scale * CELL_SIZE));
+                const clickY = Math.floor((e.clientY - offsetY) / (scale * CELL_SIZE));
+                tryPlacePixel(clickX, clickY);
+            }
+        });
+
+        viewport.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomFactor = 1.2;
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            const canvasX = (mouseX - offsetX) / scale;
+            const canvasY = (mouseY - offsetY) / scale;
+
+            if (e.deltaY < 0) scale *= zoomFactor;
+            else scale /= zoomFactor;
+            scale = Math.max(0.05, Math.min(scale, 15));
+
+            offsetX = mouseX - canvasX * scale;
+            offsetY = mouseY - canvasY * scale;
+            requestRender();
+        }, { passive: false });
+
+        viewport.addEventListener('touchstart', (e) => {
+            if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel) return;
+            if (e.touches.length === 1) {
+                isDragging = true;
+                isPanning = false;
+                startX = e.touches[0].clientX - offsetX;
+                startY = e.touches[0].clientY - offsetY;
+            } else if (e.touches.length === 2) {
+                isDragging = false; 
+                startScale = scale;
+                touchStartDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+            }
+        });
+
+        viewport.addEventListener('touchmove', (e) => {
+            if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel) return;
+            e.preventDefault();
+            if (e.touches.length === 1 && isDragging) {
+                isPanning = true;
+                offsetX = e.touches[0].clientX - startX;
+                offsetY = e.touches[0].clientY - startY;
+                requestRender();
+            } else if (e.touches.length === 2) {
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const factor = dist / touchStartDist;
+                const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                const canvasX = (midX - offsetX) / scale;
+                const canvasY = (midY - offsetY) / scale;
+
+                scale = Math.max(0.05, Math.min(startScale * factor, 15));
+                offsetX = midX - canvasX * scale;
+                offsetY = midY - canvasY * scale;
+                requestRender();
+            }
+        }, { passive: false });
+
+        viewport.addEventListener('touchend', (e) => {
+            if (isDragging && !isPanning && e.changedTouches.length > 0) {
+                const touch = e.changedTouches[0];
+                const clickX = Math.floor((touch.clientX - offsetX) / (scale * CELL_SIZE));
+                const clickY = Math.floor((touch.clientY - offsetY) / (scale * CELL_SIZE));
+                tryPlacePixel(clickX, clickY);
+            }
+            isDragging = false;
+        });
+
+        palette.addEventListener('click', (e) => {
+            if (e.target.classList.contains('color-btn')) {
+                triggerHaptic('click'); // 震動：切換一般顏色
+                const activeBtn = document.querySelector('.color-btn.active') || document.querySelector('.color-custom-label.active');
+                if (activeBtn) activeBtn.classList.remove('active');
+                e.target.classList.add('active');
+                selectedColor = e.target.getAttribute('data-color');
+            }
+        });
+
+        customColorPicker.addEventListener('input', (e) => {
+            const activeBtn = document.querySelector('.color-btn.active') || document.querySelector('.color-custom-label.active');
+            if (activeBtn) activeBtn.classList.remove('active');
+            customColorLabel.classList.add('active');
+            selectedColor = e.target.value;
+            customColorLabel.style.background = selectedColor;
+        });
+        
+        customColorLabel.addEventListener('click', () => {
+            triggerHaptic('click'); // 震動：點擊自訂色彩系統
+            const activeBtn = document.querySelector('.color-btn.active') || document.querySelector('.color-custom-label.active');
+            if (activeBtn) activeBtn.classList.remove('active');
+            customColorLabel.classList.add('active');
+            selectedColor = customColorPicker.value;
+        });
+
+        window.addEventListener('resize', () => { requestRender(); });
+        centerCanvas();
+
+        document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>
