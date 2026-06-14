@@ -308,6 +308,104 @@
             filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
         }
 
+        /* 🛡️ Beta測試說明彈窗系統 - 賽博毛玻璃風格 */
+        #beta-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(2, 4, 10, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .beta-modal-panel {
+            width: 90%;
+            max-width: 500px;
+            background: rgba(10, 18, 42, 0.8);
+            border: 2px solid var(--neon-purple);
+            border-radius: var(--panel-radius);
+            box-shadow: 0 0 40px rgba(189, 0, 255, 0.3), inset 0 0 20px rgba(0, 240, 255, 0.1);
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: modal-slide-in 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        /* 數位動態掃描線效果 */
+        .beta-modal-panel::before {
+            content: '';
+            position: absolute;
+            top: -100%; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(189, 0, 255, 0.05), transparent);
+            animation: modal-scan 4s infinite linear;
+            pointer-events: none;
+        }
+        .beta-modal-title {
+            font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--neon-purple);
+            background: linear-gradient(180deg, #ffffff 40%, var(--neon-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .beta-modal-content {
+            font-size: 14px;
+            color: #b0c4de;
+            line-height: 1.7;
+            text-align: left;
+            margin-bottom: 28px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        /* 美化內建滾動條 */
+        .beta-modal-content::-webkit-scrollbar { width: 4px; }
+        .beta-modal-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        .beta-modal-content::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 2px; }
+        
+        .beta-warning-item {
+            margin-bottom: 12px;
+            padding-left: 15px;
+            position: relative;
+        }
+        .beta-warning-item::before {
+            content: '🔺';
+            position: absolute;
+            left: -5px;
+            top: 1px;
+            font-size: 11px;
+        }
+        .beta-modal-btn {
+            background: linear-gradient(135deg, rgba(189, 0, 255, 0.3) 0%, rgba(0, 240, 255, 0.3) 100%);
+            border: 1px solid var(--neon-blue);
+            color: #ffffff;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .beta-modal-btn:hover {
+            background: linear-gradient(135deg, rgba(189, 0, 255, 0.6) 0%, rgba(0, 240, 255, 0.6) 100%);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.5), 0 0 10px var(--neon-purple);
+            transform: scale(1.05);
+        }
+
         /* 🎞️ 動畫擴充定義 */
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 0 8px var(--neon-green); opacity: 0.8; }
@@ -326,12 +424,35 @@
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
         }
+        @keyframes modal-slide-in {
+            from { transform: translateY(30px); opacity: 0; filter: blur(10px); }
+            to { transform: translateY(0); opacity: 1; filter: blur(0); }
+        }
+        @keyframes modal-scan {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
+
+    <div id="beta-modal-overlay">
+        <div class="beta-modal-panel">
+            <div class="beta-modal-title">BETA 測試版本使用協定</div>
+            <div class="beta-modal-content">
+                <div style="text-align: center; color: #fff; margin-bottom: 15px; font-weight: bold;">歡迎來到 Pixel Wars 量子矩陣測試場</div>
+                <div class="beta-warning-item">本網頁目前處於 Beta 核心測試階段，部分運算系統可能尚未完全最佳化。</div>
+                <div class="beta-warning-item">畫布資料與伺服器保持即時同步，測試期間可能會因伺服器維護或資料庫架構調整，不定時進行「像素世界線重刷（清空歷史數據）」。</div>
+                <div class="beta-warning-item">極少數情況下，若網路同步產生波動，可能會發生畫面渲染延遲或像素點丟失。</div>
+                <div class="beta-warning-item">開發團隊保留對冷卻機制（Cooldown）及色彩權限隨時修正與終止的權利。</div>
+                <div style="color: var(--neon-blue); margin-top: 15px; font-size: 13px; text-align: center;">感謝您參與本次同步，有任何 Bug 請至 Discord 異常回報。</div>
+            </div>
+            <button class="beta-modal-btn" id="close-beta-btn">同意並接入核心</button>
+        </div>
+    </div>
 
     <div id="ui-stats">
         <div class="stat-item"><span class="dot-online"></span> 即時在線：<span id="online-count">0</span> 人</div>
@@ -402,6 +523,18 @@
                 }
             }
         }
+
+        // 🛡️ 處理 Beta 測試彈窗關閉邏輯
+        const betaOverlay = document.getElementById('beta-modal-overlay');
+        const closeBetaBtn = document.getElementById('close-beta-btn');
+        
+        closeBetaBtn.addEventListener('click', () => {
+            triggerHaptic('click'); // 點擊同意時觸發輕微震動
+            betaOverlay.style.opacity = '0';
+            setTimeout(() => {
+                betaOverlay.style.display = 'none';
+            }, 500); // 動畫結束後徹底隱藏
+        });
 
         db.ref('stats/totalViews').on('value', (snap) => {
             if(snap.exists()) viewCountEl.innerText = snap.val();
@@ -560,7 +693,7 @@
         const ServerValue = firebase.database.ServerValue;
 
         viewport.addEventListener('mousedown', (e) => {
-            if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel) return;
+            if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
             isDragging = true;
             isPanning = false;
             startX = e.clientX - offsetX;
@@ -586,6 +719,7 @@
         });
 
         viewport.addEventListener('wheel', (e) => {
+            if(betaOverlay.style.display !== 'none') return; // 彈窗顯示時禁止縮放畫布
             e.preventDefault();
             const zoomFactor = 1.2;
             const mouseX = e.clientX;
@@ -603,7 +737,7 @@
         }, { passive: false });
 
         viewport.addEventListener('touchstart', (e) => {
-            if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel) return;
+            if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
             if (e.touches.length === 1) {
                 isDragging = true;
                 isPanning = false;
@@ -620,7 +754,8 @@
         });
 
         viewport.addEventListener('touchmove', (e) => {
-            if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel) return;
+            if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
+            if(betaOverlay.style.display !== 'none') return; // 彈窗顯示時禁止拖拽
             e.preventDefault();
             if (e.touches.length === 1 && isDragging) {
                 isPanning = true;
