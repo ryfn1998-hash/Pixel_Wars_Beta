@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pixel Wars 全球官方版 (Beta測試版)</title>
+    <title>Pixel Wars 像素戰爭 (Beta)</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -208,6 +208,7 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
+            width: auto;
         }
         .palette {
             display: flex;
@@ -215,111 +216,61 @@
             padding: 14px 28px;
             border-radius: 50px;
             align-items: center;
-            transition: all 0.3s;
-        }
-        .palette:hover {
-            border-color: var(--neon-blue);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.75), inset 0 1px 1px rgba(255,255,255,0.3), 0 0 35px rgba(189, 0, 255, 0.55);
+            box-sizing: border-box;
+            height: 66px;
         }
         
         /* 🎨 按鈕基礎樣式 */
-        .color-btn {
+        .color-btn, .color-custom-label {
             width: 38px;
             height: 38px;
+            min-width: 38px;  
+            min-height: 38px;
             border-radius: 50%;
             border: 2px solid rgba(255,255,255,0.3);
             cursor: pointer;
             box-sizing: border-box;
             position: relative;
             overflow: hidden;
-            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s, box-shadow 0.2s;
+            transition: transform 0.2s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.2s, box-shadow 0.2s;
         }
-        .color-btn:hover {
-            transform: scale(1.18);
-            border-color: rgba(255,255,255,0.9);
-        }
-
-        /* ⚡ 核心修復：被選取的按鈕——科技藍外殼 + 貫穿白色光速劃過效果 */
-        .color-btn.active {
-            border-color: var(--neon-blue) !important;
-            transform: scale(1.25);
-            /* 科技藍外發光與內部陰影 */
-            box-shadow: 
-                0 0 20px rgba(0, 240, 255, 0.85), 
-                inset 0 0 6px rgba(0, 240, 255, 0.5);
+        .color-btn:hover, .color-custom-label:hover {
+            transform: scale(1.1);
         }
 
-        /* 建立一個獨立的流光層，確保白色光速不會破壞按鈕原本的顏色 */
-        .color-btn.active::before {
+        /* ✨ 彩虹自訂按鈕特殊底色 */
+        .color-custom-label {
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00f0ff, #0000ff, #bd00ff);
+            display: block;
+        }
+
+        /* ✨ 當按鈕被選中（Active）時的效果 */
+        .color-btn.active, .color-custom-label.active {
+            border-color: #ffffff !important; /* 選中時邊框變純白，加強質感 */
+            transform: scale(1.15);
+            box-shadow: 0 0 22px rgba(255, 255, 255, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.6);
+        }
+
+        /* 🌟 核心視覺：極速白邊流光刷過去的效果（偽元素超頻優化） */
+        .color-btn.active::before, .color-custom-label.active::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            /* 科技藍半透明底層 + 中間凝聚一束「高亮純白光速」 */
+            top: -50%;
+            left: -150%;
+            width: 400%;
+            height: 200%;
             background: linear-gradient(
-                135deg,
-                rgba(0, 240, 255, 0.1) 20%,
-                rgba(0, 240, 255, 0.4) 35%,
-                rgba(255, 255, 255, 1) 50%,   /* 白色光速核心 */
-                rgba(0, 240, 255, 0.4) 65%,
-                rgba(0, 240, 255, 0.1) 80%
+                115deg,
+                transparent 40%,
+                rgba(255, 255, 255, 0.1) 45%,
+                rgba(255, 255, 255, 1) 50%,    /* 純白核心高亮流光 */
+                rgba(255, 255, 255, 0.1) 55%,
+                transparent 60%
             );
-            background-size: 300% 300%;
-            background-position: 0% 0%;
+            transform: rotate(-25deg);
             pointer-events: none;
             z-index: 5;
-            animation: whiteLaserStreak 2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
-        }
-        
-        .color-custom-label {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.25);
-            cursor: pointer;
-            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00f0ff, #0000ff, #bd00ff);
-            box-sizing: border-box;
-            display: block;
-            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s, box-shadow 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-        .color-custom-label::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.6), transparent);
-            transform: translateX(-100%);
-            animation: sweep 2s infinite linear;
-        }
-        .color-custom-label:hover {
-            transform: scale(1.18);
-            border-color: rgba(255,255,255,0.9);
-        }
-        
-        /* 自訂色彩按鈕啟動時也同步套用科技藍白色光速 */
-        .color-custom-label.active {
-            border-color: var(--neon-blue) !important;
-            transform: scale(1.25);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.85);
-        }
-        .color-custom-label.active::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(
-                135deg,
-                transparent 20%,
-                rgba(0, 240, 255, 0.3) 35%,
-                rgba(255, 255, 255, 1) 50%,
-                rgba(0, 240, 255, 0.3) 65%,
-                transparent 80%
-            );
-            background-size: 300% 300%;
-            z-index: 5;
-            animation: whiteLaserStreak 2s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+            animation: whiteLaserStreak 1.4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
         }
 
         #custom-color-picker {
@@ -328,6 +279,7 @@
             width: 0;
             height: 0;
             pointer-events: none;
+            visibility: hidden; 
         }
 
         #discord-btn {
@@ -413,10 +365,11 @@
             100% { background-position: 100% 50%; transform: rotate(-16deg) scale(1); }
         }
         
-        /* ⚡ 核心修復：白色高亮光速由左上滑向右下的高質感貝茲動畫 */
+        /* 🚀 優化後的雷射光速白邊動畫，增加等待間隔讓流光更像流星 */
         @keyframes whiteLaserStreak {
-            0% { background-position: 200% 200%; }
-            100% { background-position: -100% -100%; }
+            0% { transform: translate3d(0, 0, 0) rotate(-25deg); }
+            60% { transform: translate3d(280%, 0, 0) rotate(-25deg); }
+            100% { transform: translate3d(280%, 0, 0) rotate(-25deg); }
         }
         
         @keyframes pulse {
@@ -427,10 +380,6 @@
         @keyframes warning-pulse {
             from { transform: scale(1); opacity: 0.9; }
             to { transform: scale(1.03); opacity: 1; filter: drop-shadow(0 0 8px var(--neon-red)); }
-        }
-        @keyframes sweep {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
         }
     </style>
 
@@ -512,7 +461,6 @@
         const onlineCountEl = document.getElementById('online-count');
         const viewCountEl = document.getElementById('view-count');
 
-        // 🛠️ 手機端觸覺回饋
         function triggerHaptic(type) {
             if (navigator.vibrate) {
                 if (type === 'click') navigator.vibrate(12);
@@ -521,7 +469,6 @@
             }
         }
 
-        // 🛡️ 彈窗關閉
         const betaOverlay = document.getElementById('beta-modal-overlay');
         const closeBetaBtn = document.getElementById('close-beta-btn');
         
@@ -531,7 +478,6 @@
             setTimeout(() => { betaOverlay.style.display = 'none'; }, 500);
         });
 
-        // 📊 數據即時同步與瀏覽量計算
         db.ref('stats/totalViews').on('value', (snap) => {
             if(snap.exists()) viewCountEl.innerText = snap.val();
         });
@@ -551,7 +497,6 @@
             }
         });
 
-        // 🕹️ 渲染與引擎配置
         const viewport = document.getElementById('viewport');
         const wrapper = document.getElementById('canvas-wrapper');
         const canvas = document.getElementById('pixelCanvas');
@@ -623,20 +568,32 @@
             wrapper.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
         }
 
-        pixelsRef.on('child_added', (snapshot) => {
-            const key = snapshot.key;
+        pixelsRef.once('value', (snapshot) => {
             const data = snapshot.val();
-            const cleanKey = key.replace('x', '').replace('y', '').replace('_', ',');
-            localMap[cleanKey] = data.color;
+            if (data) {
+                for (let key in data) {
+                    const cleanKey = key.replace('x', '').replace('y', '').replace('_', ',');
+                    localMap[cleanKey] = data[key].color;
+                }
+            }
             requestRender();
-        });
-
-        pixelsRef.on('child_changed', (snapshot) => {
-            const key = snapshot.key;
-            const data = snapshot.val();
-            const cleanKey = key.replace('x', '').replace('y', '').replace('_', ',');
-            localMap[cleanKey] = data.color;
-            requestRender();
+            
+            pixelsRef.on('child_changed', (snap) => {
+                const key = snap.key;
+                const val = snap.val();
+                const cleanKey = key.replace('x', '').replace('y', '').replace('_', ',');
+                localMap[cleanKey] = val.color;
+                requestRender();
+            });
+            pixelsRef.on('child_added', (snap) => {
+                const key = snap.key;
+                const val = snap.val();
+                const cleanKey = key.replace('x', '').replace('y', '').replace('_', ',');
+                if (!localMap[cleanKey]) {
+                    localMap[cleanKey] = val.color;
+                    requestRender();
+                }
+            });
         });
 
         if (localStorage.getItem('pixelCooldownEnd')) {
@@ -689,7 +646,6 @@
             }
         }
 
-        // 滑鼠操控邏輯
         viewport.addEventListener('mousedown', (e) => {
             if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
             isDragging = true;
@@ -734,7 +690,6 @@
             requestRender();
         }, { passive: false });
 
-        // 行動端雙指縮放與拖曳
         viewport.addEventListener('touchstart', (e) => {
             if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
             if (e.touches.length === 1) {
@@ -789,7 +744,6 @@
             isDragging = false;
         });
 
-        // 🎨 調色盤與自訂顏色邏輯
         palette.addEventListener('click', (e) => {
             if (e.target.classList.contains('color-btn')) {
                 triggerHaptic('click');
@@ -808,7 +762,7 @@
             customColorLabel.style.background = selectedColor;
         });
         
-        customColorLabel.addEventListener('click', () => {
+        customColorLabel.addEventListener('click', (e) => {
             triggerHaptic('click');
             const activeBtn = document.querySelector('.color-btn.active') || document.querySelector('.color-custom-label.active');
             if (activeBtn) activeBtn.classList.remove('active');
@@ -819,7 +773,6 @@
         window.addEventListener('resize', () => { requestRender(); });
         centerCanvas();
 
-        // 🔒 系統安全防護鏈
         document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
         document.addEventListener('keydown', (e) => {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
