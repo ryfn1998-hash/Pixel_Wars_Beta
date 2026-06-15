@@ -15,6 +15,7 @@
             --glass-bg: rgba(6, 10, 28, 0.75); 
             --glass-border: rgba(189, 0, 255, 0.35); 
             --panel-radius: 24px;
+            --gold-glow: #ffd700;
         }
 
         body {
@@ -187,8 +188,6 @@
             position: absolute;
             box-shadow: 0 0 70px rgba(189, 0, 255, 0.35), 0 0 50px rgba(0,0,0,0.9);
             background-color: #ffffff;
-            background-image: linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
-            background-size: 10px 10px;
             transform-origin: 0 0;
             border: 2px solid rgba(189, 0, 255, 0.5);
             border-radius: 8px;
@@ -227,7 +226,7 @@
             min-width: 38px;  
             min-height: 38px;
             border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.3);
+            border: 2px solid rgba(255,255,255,0.25);
             cursor: pointer;
             box-sizing: border-box;
             position: relative;
@@ -238,21 +237,23 @@
             transform: scale(1.1);
         }
 
-        /* ✨ 彩虹自訂按鈕特殊底色 */
+        /* ✨ 自訂色彩按鈕基礎背景（JS內會被覆蓋） */
         .color-custom-label {
             background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00f0ff, #0000ff, #bd00ff);
             display: block;
         }
 
-        /* ✨ 當按鈕被選中（Active）時的效果 */
-        .color-btn.active, .color-custom-label.active {
-            border-color: #ffffff !important; /* 選中時邊框變純白，加強質感 */
-            transform: scale(1.15);
-            box-shadow: 0 0 22px rgba(255, 255, 255, 0.8), inset 0 0 8px rgba(255, 255, 255, 0.6);
-        }
+        /* ========================================================
+           🌌 核心客製化流光分流樣式控制
+           ======================================================== */
 
-        /* 🌟 核心視覺：極速白邊流光刷過去的效果（偽元素超頻優化） */
-        .color-btn.active::before, .color-custom-label.active::before {
+        /* 🔷 款式 1：科技藍組選中效果（白、綠、藍、青、彩虹鈕） */
+        .style-tech-blue.active {
+            border-color: var(--neon-blue) !important;
+            transform: scale(1.18);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.85), inset 0 0 8px rgba(255, 255, 255, 0.6);
+        }
+        .style-tech-blue.active::before {
             content: '';
             position: absolute;
             top: -50%;
@@ -263,14 +264,41 @@
                 115deg,
                 transparent 40%,
                 rgba(255, 255, 255, 0.1) 45%,
-                rgba(255, 255, 255, 1) 50%,    /* 純白核心高亮流光 */
+                rgba(255, 255, 255, 1) 50%,    /* 純白核心高亮光刷 */
                 rgba(255, 255, 255, 0.1) 55%,
                 transparent 60%
             );
             transform: rotate(-25deg);
             pointer-events: none;
             z-index: 5;
-            animation: whiteLaserStreak 1.4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+            animation: laserStreakFixed 1.4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+        }
+
+        /* ⬛ 款式 2：暗夜黑金組選中效果（黑、紅、黃、紫鈕） */
+        .style-dark-gold.active {
+            border-color: var(--gold-glow) !important;
+            transform: scale(1.18);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.85), inset 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+        .style-dark-gold.active::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -150%;
+            width: 400%;
+            height: 200%;
+            background: linear-gradient(
+                115deg,
+                transparent 40%,
+                rgba(255, 223, 0, 0.4) 45%,
+                rgba(255, 255, 255, 1) 50%,    /* 黃金流光核心（帶白高亮） */
+                rgba(255, 223, 0, 0.4) 55%,
+                transparent 60%
+            );
+            transform: rotate(-25deg);
+            pointer-events: none;
+            z-index: 5;
+            animation: laserStreakFixed 1.4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
         }
 
         #custom-color-picker {
@@ -365,8 +393,8 @@
             100% { background-position: 100% 50%; transform: rotate(-16deg) scale(1); }
         }
         
-        /* 🚀 優化後的雷射光速白邊動畫，增加等待間隔讓流光更像流星 */
-        @keyframes whiteLaserStreak {
+        /* 🚀 優化後的流光動畫速度與無縫外觀 */
+        @keyframes laserStreakFixed {
             0% { transform: translate3d(0, 0, 0) rotate(-25deg); }
             60% { transform: translate3d(280%, 0, 0) rotate(-25deg); }
             100% { transform: translate3d(280%, 0, 0) rotate(-25deg); }
@@ -421,28 +449,50 @@
 
     <div id="ui-bottom">
         <div class="palette enchanted-glass" id="palette">
-            <div class="color-btn active" style="background-color: #000000;" data-color="#000000"></div>
-            <div class="color-btn" style="background-color: #ffffff; border: 1px solid #7f8c8d;" data-color="#ffffff"></div>
-            <div class="color-btn" style="background-color: #e50000;" data-color="#e50000"></div>
-            <div class="color-btn" style="background-color: #00cc00;" data-color="#00cc00"></div>
-            <div class="color-btn" style="background-color: #0000e5;" data-color="#0000e5"></div>
-            <div class="color-btn" style="background-color: #f5f500;" data-color="#f5f500"></div>
-            <div class="color-btn" style="background-color: #a000a0;" data-color="#a000a0"></div>
-            <div class="color-btn" style="background-color: #00a0a0;" data-color="#00a0a0"></div>
+            <div class="color-btn active style-dark-gold" style="background-color: #000000;" data-color="#000000"></div>
+            <div class="color-btn style-dark-gold" style="background-color: #e50000;" data-color="#e50000"></div>
+            <div class="color-btn style-dark-gold" style="background-color: #f5f500;" data-color="#f5f500"></div>
+            <div class="color-btn style-dark-gold" style="background-color: #a000a0;" data-color="#a000a0"></div>
+
+            <div class="color-btn style-tech-blue" style="background-color: #ffffff; border: 1px solid #7f8c8d;" data-color="#ffffff"></div>
+            <div class="color-btn style-tech-blue" style="background-color: #00cc00;" data-color="#00cc00"></div>
+            <div class="color-btn style-tech-blue" style="background-color: #0000e5;" data-color="#0000e5"></div>
+            <div class="color-btn style-tech-blue" style="background-color: #00a0a0;" data-color="#00a0a0"></div>
             
-            <label class="color-custom-label" id="custom-color-label" for="custom-color-picker" title="自訂色彩系統"></label>
+            <label class="color-custom-label style-tech-blue" id="custom-color-label" for="custom-color-picker" title="自訂色彩系統"></label>
             <input type="color" id="custom-color-picker" value="#bd00ff">
         </div>
     </div>
-
-    <a href="https://discord.gg/RSbvaExgfX" target="_blank" id="discord-btn" title="加入官方 Discord 頻道">
+    <a href="https://discord.gg/RSbvaExgfX" id="discord-btn" target="_blank" title="加入官方 Discord 頻道">
         <svg viewBox="0 0 127.14 96.36">
             <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.84-11.12,68.43,68.43,0,0,1-10.75-5.18c.91-.66,1.8-1.34,2.65-2a75.58,75.58,0,0,0,72.7,0c.85.69,1.74,1.37,2.65,2a68.43,68.43,0,0,1-10.75,5.18,74.37,74.37,0,0,0,6.84,11.12,105.73,105.73,0,0,0,31.6-18.83C129.56,49.63,123.63,26.83,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/>
         </svg>
     </a>
 
     <script>
-        // 📡 Firebase 配置
+        // ========================================================
+        // 🔒 網頁防護安全機制（防複製、鎖定右鍵、防 F12 開發者工具）
+        // ========================================================
+        document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
+        document.addEventListener('selectstart', (e) => { e.preventDefault(); });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u')) || (e.ctrlKey && e.key === 'c')) {
+                e.preventDefault();
+            }
+        });
+
+        // 📳 觸覺震動回饋系統
+        function triggerHaptic(type) {
+            if (navigator.vibrate) {
+                if (type === 'click') navigator.vibrate(12);
+                else if (type === 'success') navigator.vibrate([20, 30, 20]);
+                else if (type === 'warning') navigator.vibrate([60, 50, 60]);
+            }
+        }
+
+        // ========================================================
+        // 📡 
+        // ========================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCBdgYtNIFl21qObobpNCVsovzrAoPPUv8",
             authDomain: "my-pixel-wars.firebaseapp.com",
@@ -456,19 +506,14 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        const pixelsRef = db.ref('pixels');
+        const pixelsRef = db.ref('pixels'); // 校正回歸你的 'pixels' 路徑
 
         const onlineCountEl = document.getElementById('online-count');
         const viewCountEl = document.getElementById('view-count');
 
-        function triggerHaptic(type) {
-            if (navigator.vibrate) {
-                if (type === 'click') navigator.vibrate(12);
-                else if (type === 'success') navigator.vibrate([20, 30, 20]);
-                else if (type === 'warning') navigator.vibrate([60, 50, 60]);
-            }
-        }
-
+        // ========================================================
+        // 🔮 Beta 同意視窗關閉邏輯
+        // ========================================================
         const betaOverlay = document.getElementById('beta-modal-overlay');
         const closeBetaBtn = document.getElementById('close-beta-btn');
         
@@ -478,6 +523,9 @@
             setTimeout(() => { betaOverlay.style.display = 'none'; }, 500);
         });
 
+        // ========================================================
+        // 📊 瀏覽量與在線人數統計系統
+        // ========================================================
         db.ref('stats/totalViews').on('value', (snap) => {
             if(snap.exists()) viewCountEl.innerText = snap.val();
         });
@@ -497,6 +545,9 @@
             }
         });
 
+        // ========================================================
+        // 🧮 500x500 核心畫布視窗變數
+        // ========================================================
         const viewport = document.getElementById('viewport');
         const wrapper = document.getElementById('canvas-wrapper');
         const canvas = document.getElementById('pixelCanvas');
@@ -530,6 +581,9 @@
         let cooldownEndTime = 0;
         let renderRequested = false;
 
+        // ========================================================
+        // 🎨 渲染與視窗算法
+        // ========================================================
         function requestRender() {
             if (!renderRequested) {
                 renderRequested = true;
@@ -568,6 +622,9 @@
             wrapper.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
         }
 
+        // ========================================================
+        // 📡 Firebase 即時資料庫資料讀取與同步
+        // ========================================================
         pixelsRef.once('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -596,12 +653,15 @@
             });
         });
 
+        // ========================================================
+        // ⏳ 核心冷卻與落點寫入機制
+        // ========================================================
         if (localStorage.getItem('pixelCooldownEnd')) {
             cooldownEndTime = parseInt(localStorage.getItem('pixelCooldownEnd'), 10);
         }
 
         function startCooldown() {
-            cooldownEndTime = Date.now() + (1 * 1000); 
+            cooldownEndTime = Date.now() + (1 * 1000); // 1秒冷卻
             localStorage.setItem('pixelCooldownEnd', cooldownEndTime);
             updateStatusText();
         }
@@ -646,6 +706,9 @@
             }
         }
 
+        // ========================================================
+        // 🖱️ 視窗拖曳與縮放事件處理（桌機端）
+        // ========================================================
         viewport.addEventListener('mousedown', (e) => {
             if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
             isDragging = true;
@@ -690,6 +753,9 @@
             requestRender();
         }, { passive: false });
 
+        // ========================================================
+        // 📱 視窗拖曳與縮放事件處理（行動觸控端）
+        // ========================================================
         viewport.addEventListener('touchstart', (e) => {
             if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
             if (e.touches.length === 1) {
@@ -744,13 +810,17 @@
             isDragging = false;
         });
 
+        // ========================================================
+        // 🎨 調色盤與流光切換邏輯
+        // ========================================================
         palette.addEventListener('click', (e) => {
-            if (e.target.classList.contains('color-btn')) {
+            const btn = e.target.closest('.color-btn');
+            if (btn) {
                 triggerHaptic('click');
                 const activeBtn = document.querySelector('.color-btn.active') || document.querySelector('.color-custom-label.active');
                 if (activeBtn) activeBtn.classList.remove('active');
-                e.target.classList.add('active');
-                selectedColor = e.target.getAttribute('data-color');
+                btn.classList.add('active');
+                selectedColor = btn.getAttribute('data-color');
             }
         });
 
@@ -772,13 +842,6 @@
 
         window.addEventListener('resize', () => { requestRender(); });
         centerCanvas();
-
-        document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
-                e.preventDefault();
-            }
-        });
     </script>
 </body>
 </html>
