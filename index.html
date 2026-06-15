@@ -12,9 +12,9 @@
             --neon-red: #ff073a;
             --neon-purple: #bd00ff;
             --neon-pink: #ff0055;
-            /* 超進階液態毛玻璃基底色 */
-            --glass-bg: rgba(6, 11, 25, 0.55);
-            --glass-border: rgba(0, 240, 255, 0.3);
+            --neon-gold: #ffd700;
+            --glass-bg: rgba(4, 7, 20, 0.65);
+            --glass-border: rgba(0, 240, 255, 0.25);
             --panel-radius: 24px;
         }
 
@@ -27,40 +27,37 @@
             position: fixed;
             width: 100%;
             height: 100%;
-            /* 3D 立體深邃幾何矩陣背景 */
             background-image: 
-                radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.15) 0%, transparent 55%),
-                radial-gradient(circle at 15% 80%, rgba(189, 0, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 85% 70%, rgba(255, 0, 85, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.18) 0%, transparent 55%),
+                radial-gradient(circle at 15% 80%, rgba(189, 0, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 85% 70%, rgba(255, 0, 85, 0.1) 0%, transparent 45%),
                 linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 100% 100%, 50px 50px, 50px 50px;
         }
 
-        /* 🔮 核心特效：麥塊附魔反光動態液態毛玻璃樣式 */
         .enchanted-glass {
             background: var(--glass-bg);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            backdrop-filter: blur(30px) saturate(210%);
+            -webkit-backdrop-filter: blur(30px) saturate(210%);
             border: 1px solid var(--glass-border);
             position: relative;
             overflow: hidden;
         }
 
-        /* 麥塊附魔專用流淌非線性液態反光層 */
         .enchanted-glass::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
             background: linear-gradient(
                 125deg,
                 transparent 30%,
-                rgba(189, 0, 255, 0.12) 40%,
-                rgba(0, 240, 255, 0.18) 50%,
-                rgba(255, 0, 85, 0.12) 60%,
+                rgba(189, 0, 255, 0.15) 42%,
+                rgba(0, 240, 255, 0.22) 50%,
+                rgba(255, 0, 85, 0.15) 58%,
                 transparent 70%
             );
             background-size: 200% 200%;
@@ -68,26 +65,21 @@
             mix-blend-mode: color-dodge;
             pointer-events: none;
             z-index: 0;
-            animation: liquidEnchant 6s ease infinite alternate;
+            animation: liquidEnchant 7s ease infinite alternate;
         }
 
-        /* 確保內容不被附魔反光遮擋 */
         .enchanted-glass > * {
             position: relative;
             z-index: 1;
         }
         
-        /* 📊 左上角數據面板 */
         #ui-stats {
             position: absolute;
             top: 25px;
             left: 25px;
             padding: 16px 24px;
             border-radius: var(--panel-radius);
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.6), 
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 20px rgba(0, 240, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 20px rgba(0, 240, 255, 0.15);
             z-index: 20;
             font-size: 13px;
             line-height: 1.8;
@@ -95,11 +87,8 @@
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
         #ui-stats:hover {
-            border-color: rgba(0, 240, 255, 0.7);
-            box-shadow: 
-                0 25px 50px rgba(0, 0, 0, 0.7), 
-                inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                0 0 30px rgba(0, 240, 255, 0.4);
+            border-color: rgba(0, 240, 255, 0.6);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 30px rgba(0, 240, 255, 0.35);
             transform: translateY(-2px);
         }
         .stat-item {
@@ -134,7 +123,6 @@
             box-shadow: 0 0 12px var(--neon-blue);
         }
 
-        /* 👑 頂部中央控制面板 */
         #ui-top {
             position: absolute;
             top: 25px;
@@ -147,10 +135,7 @@
             max-width: 480px;
             padding: 14px 28px;
             border-radius: var(--panel-radius);
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.6), 
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 25px rgba(0, 240, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 25px rgba(0, 240, 255, 0.2);
         }
         h1 { 
             margin: 0; 
@@ -183,7 +168,6 @@
             padding: 0 6px;
         }
 
-        /* 🕹️ 遊戲畫布視窗 */
         #viewport {
             width: 100vw;
             height: 100vh;
@@ -198,9 +182,7 @@
             position: absolute;
             box-shadow: 0 0 60px rgba(0, 240, 255, 0.25), 0 0 40px rgba(0,0,0,0.9);
             background-color: #ffffff;
-            background-image: 
-                linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
+            background-image: linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px);
             background-size: 10px 10px;
             transform-origin: 0 0;
             border: 2px solid rgba(0, 240, 255, 0.4);
@@ -217,7 +199,6 @@
             image-rendering: crisp-edges;
         }
 
-        /* 🎨 底部調色盤 */
         #ui-bottom {
             position: absolute;
             bottom: 30px;
@@ -230,38 +211,50 @@
             gap: 14px;
             padding: 14px 28px;
             border-radius: 50px;
-            box-shadow: 
-                0 25px 50px rgba(0,0,0,0.6), 
-                inset 0 1px 1px rgba(255,255,255,0.2),
-                0 0 25px rgba(0, 240, 255, 0.25);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.65), inset 0 1px 1px rgba(255,255,255,0.2), 0 0 25px rgba(0, 240, 255, 0.2);
             align-items: center;
             transition: all 0.3s;
         }
         .palette:hover {
-            border-color: rgba(0, 240, 255, 0.6);
-            box-shadow: 
-                0 25px 50px rgba(0,0,0,0.7), 
-                inset 0 1px 1px rgba(255,255,255,0.25),
-                0 0 35px rgba(0, 240, 255, 0.45);
+            border-color: rgba(0, 240, 255, 0.5);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.25), 0 0 35px rgba(0, 240, 255, 0.4);
         }
         .color-btn {
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.25);
             cursor: pointer;
             box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
             transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s, box-shadow 0.2s;
         }
         .color-btn:hover {
-            transform: scale(1.2);
+            transform: scale(1.18);
             border-color: rgba(255,255,255,0.8);
         }
+
         .color-btn.active {
-            border-color: #ffffff;
+            border-color: var(--neon-gold);
             transform: scale(1.25);
-            box-shadow: 0 0 18px rgba(255, 255, 255, 0.7), inset 0 0 6px rgba(0,0,0,0.5);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.75), inset 0 0 8px rgba(0, 0, 0, 0.6);
             animation: active-pulse 1.5s infinite alternate;
+        }
+        .color-btn.active::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(135deg, transparent 35%, rgba(255, 255, 255, 0.5) 45%, rgba(255, 215, 0, 0.7) 50%, rgba(255, 140, 0, 0.4) 55%, transparent 65%);
+            background-size: 200% 200%;
+            transform: rotate(-10deg);
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            z-index: 2;
+            animation: goldEnchant 3.5s linear infinite;
         }
         
         .color-custom-label {
@@ -286,14 +279,29 @@
             animation: sweep 2s infinite linear;
         }
         .color-custom-label:hover {
-            transform: scale(1.2);
+            transform: scale(1.18);
             border-color: rgba(255,255,255,0.8);
         }
         .color-custom-label.active {
-            border-color: #ffffff;
+            border-color: var(--neon-gold);
             transform: scale(1.25);
-            box-shadow: 0 0 18px rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 22px rgba(255, 215, 0, 0.85);
         }
+        .color-custom-label.active::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: linear-gradient(135deg, transparent 35%, rgba(255, 255, 255, 0.4) 45%, rgba(255, 215, 0, 0.6) 50%, transparent 65%);
+            background-size: 200% 200%;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            z-index: 2;
+            animation: goldEnchant 3.5s linear infinite;
+        }
+
         #custom-color-picker {
             position: absolute;
             opacity: 0;
@@ -302,7 +310,6 @@
             pointer-events: none;
         }
 
-        /* 🔮 Discord 懸浮按鈕 */
         #discord-btn {
             position: absolute;
             bottom: 30px;
@@ -316,10 +323,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 
-                0 15px 35px rgba(88, 101, 242, 0.4), 
-                inset 0 1px 1px rgba(255,255,255,0.3),
-                0 0 15px rgba(88, 101, 242, 0.2);
+            box-shadow: 0 15px 35px rgba(88, 101, 242, 0.4), inset 0 1px 1px rgba(255,255,255,0.3), 0 0 15px rgba(88, 101, 242, 0.2);
             z-index: 20;
             border: 1px solid rgba(88, 101, 242, 0.5);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s, box-shadow 0.3s;
@@ -328,9 +332,7 @@
         #discord-btn:hover {
             transform: scale(1.15) rotate(8deg);
             background-color: rgba(88, 101, 242, 0.7);
-            box-shadow: 
-                0 20px 40px rgba(88, 101, 242, 0.5), 
-                0 0 25px var(--neon-blue);
+            box-shadow: 0 20px 40px rgba(88, 101, 242, 0.5), 0 0 25px var(--neon-blue);
             border-color: var(--neon-blue);
         }
         #discord-btn svg {
@@ -340,16 +342,15 @@
             filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
         }
 
-        /* 🛡️ Beta 測試協定彈窗 */
         #beta-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(1, 2, 6, 0.88);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(1, 2, 6, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -361,24 +362,11 @@
             width: 90%;
             max-width: 520px;
             border-radius: var(--panel-radius);
-            box-shadow: 
-                0 0 50px rgba(189, 0, 255, 0.4), 
-                inset 0 0 30px rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 50px rgba(189, 0, 255, 0.35), inset 0 0 30px rgba(0, 240, 255, 0.15);
             padding: 35px;
             box-sizing: border-box;
             text-align: center;
             border: 2px solid var(--neon-purple);
-        }
-        /* 增加彈窗的液態光暈動態幅度 */
-        .beta-modal-panel::before {
-            animation-duration: 8s;
-            background: linear-gradient(
-                135deg,
-                transparent 25%,
-                rgba(189, 0, 255, 0.18) 45%,
-                rgba(0, 240, 255, 0.25) 55%,
-                transparent 75%
-            );
         }
         .beta-modal-title {
             font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
@@ -386,11 +374,11 @@
             font-weight: 900;
             letter-spacing: 2px;
             color: #ffffff;
-            margin-bottom: 22px;
             text-shadow: 0 0 15px var(--neon-purple);
             background: linear-gradient(180deg, #ffffff 30%, var(--neon-purple) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 22px;
         }
         .beta-modal-content {
             font-size: 14px;
@@ -439,11 +427,14 @@
             transform: scale(1.04);
         }
 
-        /* 🎞️ 動畫擴充定義 */
         @keyframes liquidEnchant {
             0% { background-position: 0% 0%; transform: rotate(-15deg) scale(1); }
-            50% { background-position: 50% 100%; transform: rotate(-10deg) scale(1.1); }
+            50% { background-position: 50% 100%; transform: rotate(-10deg) scale(1.08); }
             100% { background-position: 100% 50%; transform: rotate(-20deg) scale(1); }
+        }
+        @keyframes goldEnchant {
+            0% { background-position: -200% -200%; }
+            100% { background-position: 200% 200%; }
         }
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 0 8px var(--neon-green); opacity: 0.8; }
@@ -451,8 +442,8 @@
             100% { transform: scale(1); box-shadow: 0 0 8px var(--neon-green); opacity: 0.8; }
         }
         @keyframes active-pulse {
-            0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.4); }
-            100% { box-shadow: 0 0 22px var(--neon-blue); }
+            0% { box-shadow: 0 0 12px rgba(255, 215, 0, 0.5); }
+            100% { box-shadow: 0 0 24px rgba(255, 215, 0, 0.95); }
         }
         @keyframes warning-pulse {
             from { transform: scale(1); opacity: 0.9; }
@@ -467,7 +458,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
-<body>
+    <body>
 
     <div id="beta-modal-overlay">
         <div class="beta-modal-panel enchanted-glass">
@@ -523,7 +514,7 @@
     </a>
 
     <script>
-        // 📡 Firebase 帳據與配置初始化
+        // 📡 Firebase 配置
         const firebaseConfig = {
             apiKey: "AIzaSyCBdgYtNIFl21qObobpNCVsovzrAoPPUv8",
             authDomain: "my-pixel-wars.firebaseapp.com",
@@ -542,43 +533,33 @@
         const onlineCountEl = document.getElementById('online-count');
         const viewCountEl = document.getElementById('view-count');
 
-        // 🛠️ 網頁端觸覺回饋模擬系統 (Haptic Feedback)
+        // 🛠️ 手機端觸覺回饋
         function triggerHaptic(type) {
             if (navigator.vibrate) {
-                if (type === 'click') {
-                    navigator.vibrate(12); // 切換色彩時的微震
-                } else if (type === 'success') {
-                    navigator.vibrate([20, 30, 20]); // 成功放置像素點
-                } else if (type === 'warning') {
-                    navigator.vibrate([60, 50, 60]); // 警示重震
-                }
+                if (type === 'click') navigator.vibrate(12);
+                else if (type === 'success') navigator.vibrate([20, 30, 20]);
+                else if (type === 'warning') navigator.vibrate([60, 50, 60]);
             }
         }
 
-        // 🛡️ 處理 Beta 測試彈窗關閉邏輯
+        // 🛡️ 彈窗關閉
         const betaOverlay = document.getElementById('beta-modal-overlay');
         const closeBetaBtn = document.getElementById('close-beta-btn');
         
         closeBetaBtn.addEventListener('click', () => {
             triggerHaptic('click');
             betaOverlay.style.opacity = '0';
-            setTimeout(() => {
-                betaOverlay.style.display = 'none';
-            }, 500);
+            setTimeout(() => { betaOverlay.style.display = 'none'; }, 500);
         });
 
-        // 📊 統計數據連線邏輯
+        // 📊 數據同步
         db.ref('stats/totalViews').on('value', (snap) => {
             if(snap.exists()) viewCountEl.innerText = snap.val();
         });
-
         db.ref('stats/totalViews').transaction((current) => (current || 0) + 1);
 
         const connectionsRef = db.ref('stats/connections');
-        
-        connectionsRef.on('value', (snap) => {
-            onlineCountEl.innerText = snap.numChildren();
-        });
+        connectionsRef.on('value', (snap) => { onlineCountEl.innerText = snap.numChildren(); });
 
         db.ref('.info/connected').on('value', (snapshot) => {
             if (snapshot.val() === true) {
@@ -591,7 +572,7 @@
             }
         });
 
-        // 🕹️ 畫布渲染與拖拽縮放引擎
+        // 🕹️ 渲染與引擎配置
         const viewport = document.getElementById('viewport');
         const wrapper = document.getElementById('canvas-wrapper');
         const canvas = document.getElementById('pixelCanvas');
@@ -609,7 +590,6 @@
         wrapper.style.height = (MAP_SIZE * CELL_SIZE) + 'px';
         canvas.width = MAP_SIZE;
         canvas.height = MAP_SIZE;
-
         ctx.imageSmoothingEnabled = false;
 
         let scale = 1;         
@@ -624,8 +604,8 @@
 
         const localMap = {}; 
         let cooldownEndTime = 0;
-        
         let renderRequested = false;
+
         function requestRender() {
             if (!renderRequested) {
                 renderRequested = true;
@@ -664,7 +644,6 @@
             wrapper.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
         }
 
-        // 🔄 即時監聽遠端像素點變更
         pixelsRef.on('child_added', (snapshot) => {
             const key = snapshot.key;
             const data = snapshot.val();
@@ -686,7 +665,7 @@
         }
 
         function startCooldown() {
-            cooldownEndTime = Date.now() + (1 * 1000); // 1秒冷卻
+            cooldownEndTime = Date.now() + (1 * 1000); 
             localStorage.setItem('pixelCooldownEnd', cooldownEndTime);
             updateStatusText();
         }
@@ -712,21 +691,26 @@
             }
             if (clickX >= 0 && clickX < MAP_SIZE && clickY >= 0 && clickY < MAP_SIZE) {
                 const dbKey = `x${clickX}_y${clickY}`;
-                pixelsRef.child(dbKey).set({
-                    color: selectedColor,
-                    timestamp: ServerValue.TIMESTAMP
-                }).then(() => {
-                    triggerHaptic('success');
-                    startCooldown();
-                }).catch((error) => {
-                    console.error("傳輸失敗：", error);
-                });
+                
+                if (selectedColor === '#ffffff') {
+                    pixelsRef.child(dbKey).remove().then(() => {
+                        triggerHaptic('success');
+                        startCooldown();
+                    });
+                } else {
+                    pixelsRef.child(dbKey).set({
+                        color: selectedColor 
+                    }).then(() => {
+                        triggerHaptic('success');
+                        startCooldown();
+                    }).catch((error) => {
+                        console.error("傳輸失敗：", error);
+                    });
+                }
             }
         }
 
-        const ServerValue = firebase.database.ServerValue;
-
-        // 🖱️ 滑鼠操作監聽
+        // 滑鼠操控
         viewport.addEventListener('mousedown', (e) => {
             if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
             isDragging = true;
@@ -771,7 +755,7 @@
             requestRender();
         }, { passive: false });
 
-        // 📱 手機觸控操作監聽（RWD 核心優化）
+        // 手機觸控
         viewport.addEventListener('touchstart', (e) => {
             if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
             if (e.touches.length === 1) {
@@ -826,7 +810,7 @@
             isDragging = false;
         });
 
-        // 🎨 色彩控制事件
+        // 🎨 調色盤色彩切換控制
         palette.addEventListener('click', (e) => {
             if (e.target.classList.contains('color-btn')) {
                 triggerHaptic('click');
@@ -856,7 +840,7 @@
         window.addEventListener('resize', () => { requestRender(); });
         centerCanvas();
 
-        // 🔒 安全機制：全面禁用手機端長
+        // 🔒
         document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
         document.addEventListener('keydown', (e) => {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
@@ -866,3 +850,4 @@
     </script>
 </body>
 </html>
+
