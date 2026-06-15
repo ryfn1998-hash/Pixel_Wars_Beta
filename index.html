@@ -4,71 +4,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pixel Wars 全球官方版 (Beta測試版)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon-blue: #00f0ff;
             --neon-green: #39ff14;
             --neon-red: #ff073a;
             --neon-purple: #bd00ff;
-            --glass-bg: rgba(6, 11, 25, 0.65);
-            --glass-border: rgba(0, 240, 255, 0.25);
-            --panel-radius: 30px; /* 全局科技感大圓邊 */
+            --neon-pink: #ff0055;
+            /* 超進階液態毛玻璃基底色 */
+            --glass-bg: rgba(6, 11, 25, 0.55);
+            --glass-border: rgba(0, 240, 255, 0.3);
+            --panel-radius: 24px;
         }
 
         body {
             margin: 0;
-            background-color: #04060d;
+            background-color: #020308;
             color: #e2e8f0;
             font-family: 'Noto Sans TC', sans-serif;
             overflow: hidden;
             position: fixed;
             width: 100%;
             height: 100%;
-            /* 背景加上更細緻、立體的高科技科幻幾何網格與極光紋理 */
+            /* 3D 立體深邃幾何矩陣背景 */
             background-image: 
-                radial-gradient(circle at 50% 15%, rgba(0, 240, 255, 0.12) 0%, transparent 60%),
-                radial-gradient(circle at 80% 80%, rgba(189, 0, 255, 0.08) 0%, transparent 50%),
-                linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+                radial-gradient(circle at 50% 20%, rgba(0, 240, 255, 0.15) 0%, transparent 55%),
+                radial-gradient(circle at 15% 80%, rgba(189, 0, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 85% 70%, rgba(255, 0, 85, 0.08) 0%, transparent 45%),
+                linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 50px 50px, 50px 50px;
+        }
+
+        /* 🔮 核心特效：麥塊附魔反光動態液態毛玻璃樣式 */
+        .enchanted-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 麥塊附魔專用流淌非線性液態反光層 */
+        .enchanted-glass::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                125deg,
+                transparent 30%,
+                rgba(189, 0, 255, 0.12) 40%,
+                rgba(0, 240, 255, 0.18) 50%,
+                rgba(255, 0, 85, 0.12) 60%,
+                transparent 70%
+            );
+            background-size: 200% 200%;
+            transform: rotate(-15deg);
+            mix-blend-mode: color-dodge;
+            pointer-events: none;
+            z-index: 0;
+            animation: liquidEnchant 6s ease infinite alternate;
+        }
+
+        /* 確保內容不被附魔反光遮擋 */
+        .enchanted-glass > * {
+            position: relative;
+            z-index: 1;
         }
         
-        /* 📊 左上角數據面板 - 科技感大圓邊毛玻璃 */
+        /* 📊 左上角數據面板 */
         #ui-stats {
             position: absolute;
             top: 25px;
             left: 25px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 14px 22px;
-            border-radius: var(--panel-radius); /* 圓邊 */
+            padding: 16px 24px;
+            border-radius: var(--panel-radius);
             box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.5), 
+                0 20px 40px rgba(0, 0, 0, 0.6), 
                 inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 15px rgba(0, 240, 255, 0.15);
+                0 0 20px rgba(0, 240, 255, 0.2);
             z-index: 20;
             font-size: 13px;
             line-height: 1.8;
-            border: 1px solid var(--glass-border);
             pointer-events: auto;
             transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
         #ui-stats:hover {
-            border-color: rgba(0, 240, 255, 0.6);
+            border-color: rgba(0, 240, 255, 0.7);
             box-shadow: 
-                0 20px 50px rgba(0, 0, 0, 0.7), 
+                0 25px 50px rgba(0, 0, 0, 0.7), 
                 inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                0 0 25px rgba(0, 240, 255, 0.3);
+                0 0 30px rgba(0, 240, 255, 0.4);
             transform: translateY(-2px);
         }
         .stat-item {
             display: flex;
             align-items: center;
             gap: 10px;
-            letter-spacing: 0.8px;
+            letter-spacing: 1px;
             font-weight: 500;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
         }
         .stat-item span[id] {
             font-family: 'Orbitron', sans-serif;
@@ -94,7 +134,7 @@
             box-shadow: 0 0 12px var(--neon-blue);
         }
 
-        /* 👑 頂部中央控制面板 - 改為獨立式懸浮膠囊（全圓邊毛玻璃） */
+        /* 👑 頂部中央控制面板 */
         #ui-top {
             position: absolute;
             top: 25px;
@@ -105,48 +145,45 @@
             pointer-events: none;
             width: 85%;
             max-width: 480px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 12px 28px;
-            border-radius: var(--panel-radius); /* 圓邊 */
-            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 14px 28px;
+            border-radius: var(--panel-radius);
             box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.5), 
+                0 20px 40px rgba(0, 0, 0, 0.6), 
                 inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 0 20px rgba(0, 240, 255, 0.1);
+                0 0 25px rgba(0, 240, 255, 0.15);
         }
         h1 { 
             margin: 0; 
-            font-size: 20px; 
-            font-weight: 700;
+            font-size: 22px; 
+            font-weight: 900;
             font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
-            letter-spacing: 2px;
-            background: linear-gradient(180deg, #ffffff 30%, #00f0ff 100%);
+            letter-spacing: 3px;
+            background: linear-gradient(180deg, #ffffff 20%, #00f0ff 60%, var(--neon-purple) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 8px rgba(0,240,255,0.4)); 
+            filter: drop-shadow(0 2px 10px rgba(0,240,255,0.5)); 
         }
         p { 
             margin: 6px 0 0 0; 
             font-size: 11px; 
-            color: #a3b3ed; 
-            letter-spacing: 0.8px;
+            color: #b3c5f5; 
+            letter-spacing: 1.2px;
             font-weight: bold;
             text-transform: uppercase;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
         
         #timer {
             font-family: 'Orbitron', sans-serif;
             font-weight: bold;
             color: var(--neon-red);
-            text-shadow: 0 0 10px rgba(255, 7, 58, 0.8);
+            text-shadow: 0 0 12px rgba(255, 7, 58, 0.9);
             animation: warning-pulse 0.5s ease infinite alternate;
             display: inline-block;
             padding: 0 6px;
         }
 
-        /* 🕹️ 遊戲畫布與視窗 */
+        /* 🕹️ 遊戲畫布視窗 */
         #viewport {
             width: 100vw;
             height: 100vh;
@@ -159,7 +196,7 @@
 
         #canvas-wrapper {
             position: absolute;
-            box-shadow: 0 0 60px rgba(0, 240, 255, 0.2), 0 0 30px rgba(0,0,0,0.9);
+            box-shadow: 0 0 60px rgba(0, 240, 255, 0.25), 0 0 40px rgba(0,0,0,0.9);
             background-color: #ffffff;
             background-image: 
                 linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px),
@@ -167,7 +204,7 @@
             background-size: 10px 10px;
             transform-origin: 0 0;
             border: 2px solid rgba(0, 240, 255, 0.4);
-            border-radius: 8px; /* 畫布框維持微圓角或直角以利於對齊，UI則全面圓邊 */
+            border-radius: 8px;
         }
 
         canvas {
@@ -180,7 +217,7 @@
             image-rendering: crisp-edges;
         }
 
-        /* 🎨 底部調色盤 - 高科技槍色毛玻璃全圓邊 */
+        /* 🎨 底部調色盤 */
         #ui-bottom {
             position: absolute;
             bottom: 30px;
@@ -190,52 +227,48 @@
         }
         .palette {
             display: flex;
-            gap: 12px;
-            background: rgba(8, 14, 30, 0.75);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            padding: 12px 24px;
-            border-radius: 50px; /* 圓邊膠囊 */
+            gap: 14px;
+            padding: 14px 28px;
+            border-radius: 50px;
             box-shadow: 
-                0 20px 50px rgba(0,0,0,0.6), 
-                inset 0 1px 1px rgba(255,255,255,0.15),
-                0 0 20px rgba(0, 240, 255, 0.2);
+                0 25px 50px rgba(0,0,0,0.6), 
+                inset 0 1px 1px rgba(255,255,255,0.2),
+                0 0 25px rgba(0, 240, 255, 0.25);
             align-items: center;
-            border: 1px solid var(--glass-border);
             transition: all 0.3s;
         }
         .palette:hover {
-            border-color: rgba(0, 240, 255, 0.5);
+            border-color: rgba(0, 240, 255, 0.6);
             box-shadow: 
-                0 20px 50px rgba(0,0,0,0.7), 
-                inset 0 1px 1px rgba(255,255,255,0.2),
-                0 0 30px rgba(0, 240, 255, 0.35);
+                0 25px 50px rgba(0,0,0,0.7), 
+                inset 0 1px 1px rgba(255,255,255,0.25),
+                0 0 35px rgba(0, 240, 255, 0.45);
         }
         .color-btn {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.2);
             cursor: pointer;
             box-sizing: border-box;
             transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.2s, box-shadow 0.2s;
         }
         .color-btn:hover {
-            transform: scale(1.18);
-            border-color: rgba(255,255,255,0.7);
+            transform: scale(1.2);
+            border-color: rgba(255,255,255,0.8);
         }
         .color-btn.active {
             border-color: #ffffff;
-            transform: scale(1.22);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6), inset 0 0 6px rgba(0,0,0,0.6);
+            transform: scale(1.25);
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.7), inset 0 0 6px rgba(0,0,0,0.5);
             animation: active-pulse 1.5s infinite alternate;
         }
         
         .color-custom-label {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            border: 2px solid rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.2);
             cursor: pointer;
             background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #00f0ff, #0000ff, #bd00ff);
             box-sizing: border-box;
@@ -244,23 +277,22 @@
             position: relative;
             overflow: hidden;
         }
-        /* 自訂色彩高科技旋轉炫光掃描 */
         .color-custom-label::after {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent);
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.6), transparent);
             transform: translateX(-100%);
-            animation: sweep 2.5s infinite linear;
+            animation: sweep 2s infinite linear;
         }
         .color-custom-label:hover {
-            transform: scale(1.18);
-            border-color: rgba(255,255,255,0.7);
+            transform: scale(1.2);
+            border-color: rgba(255,255,255,0.8);
         }
         .color-custom-label.active {
             border-color: #ffffff;
-            transform: scale(1.22);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+            transform: scale(1.25);
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.9);
         }
         #custom-color-picker {
             position: absolute;
@@ -270,14 +302,14 @@
             pointer-events: none;
         }
 
-        /* 🔮 Discord 懸浮按鈕 - 毛玻璃全圓邊賽博化 */
+        /* 🔮 Discord 懸浮按鈕 */
         #discord-btn {
             position: absolute;
             bottom: 30px;
             right: 30px;
-            width: 56px;
-            height: 56px;
-            background: rgba(88, 101, 242, 0.4);
+            width: 58px;
+            height: 58px;
+            background: rgba(88, 101, 242, 0.35);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border-radius: 50%;
@@ -290,15 +322,15 @@
                 0 0 15px rgba(88, 101, 242, 0.2);
             z-index: 20;
             border: 1px solid rgba(88, 101, 242, 0.5);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s, box-shadow 0.3s, border-color 0.3s;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s, box-shadow 0.3s;
             text-decoration: none;
         }
         #discord-btn:hover {
             transform: scale(1.15) rotate(8deg);
-            background-color: rgba(88, 101, 242, 0.75);
+            background-color: rgba(88, 101, 242, 0.7);
             box-shadow: 
-                0 20px 40px rgba(88, 101, 242, 0.6), 
-                0 0 25px rgba(0, 240, 255, 0.5);
+                0 20px 40px rgba(88, 101, 242, 0.5), 
+                0 0 25px var(--neon-blue);
             border-color: var(--neon-blue);
         }
         #discord-btn svg {
@@ -308,16 +340,16 @@
             filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
         }
 
-        /* 🛡️ Beta測試說明彈窗系統 - 賽博毛玻璃風格 */
+        /* 🛡️ Beta 測試協定彈窗 */
         #beta-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(2, 4, 10, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(1, 2, 6, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: 1000;
             display: flex;
             align-items: center;
@@ -327,110 +359,108 @@
         }
         .beta-modal-panel {
             width: 90%;
-            max-width: 500px;
-            background: rgba(10, 18, 42, 0.8);
-            border: 2px solid var(--neon-purple);
+            max-width: 520px;
             border-radius: var(--panel-radius);
-            box-shadow: 0 0 40px rgba(189, 0, 255, 0.3), inset 0 0 20px rgba(0, 240, 255, 0.1);
-            padding: 30px;
+            box-shadow: 
+                0 0 50px rgba(189, 0, 255, 0.4), 
+                inset 0 0 30px rgba(0, 240, 255, 0.15);
+            padding: 35px;
             box-sizing: border-box;
             text-align: center;
-            position: relative;
-            overflow: hidden;
-            animation: modal-slide-in 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: 2px solid var(--neon-purple);
         }
-        /* 數位動態掃描線效果 */
+        /* 增加彈窗的液態光暈動態幅度 */
         .beta-modal-panel::before {
-            content: '';
-            position: absolute;
-            top: -100%; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, transparent, rgba(189, 0, 255, 0.05), transparent);
-            animation: modal-scan 4s infinite linear;
-            pointer-events: none;
+            animation-duration: 8s;
+            background: linear-gradient(
+                135deg,
+                transparent 25%,
+                rgba(189, 0, 255, 0.18) 45%,
+                rgba(0, 240, 255, 0.25) 55%,
+                transparent 75%
+            );
         }
         .beta-modal-title {
             font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 2px;
             color: #ffffff;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px var(--neon-purple);
-            background: linear-gradient(180deg, #ffffff 40%, var(--neon-purple) 100%);
+            margin-bottom: 22px;
+            text-shadow: 0 0 15px var(--neon-purple);
+            background: linear-gradient(180deg, #ffffff 30%, var(--neon-purple) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .beta-modal-content {
             font-size: 14px;
-            color: #b0c4de;
-            line-height: 1.7;
+            color: #b8c9df;
+            line-height: 1.8;
             text-align: left;
-            margin-bottom: 28px;
-            max-height: 260px;
+            margin-bottom: 32px;
+            max-height: 280px;
             overflow-y: auto;
-            padding-right: 8px;
+            padding-right: 10px;
         }
-        /* 美化內建滾動條 */
         .beta-modal-content::-webkit-scrollbar { width: 4px; }
-        .beta-modal-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-        .beta-modal-content::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 2px; }
+        .beta-modal-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        .beta-modal-content::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, var(--neon-purple), var(--neon-blue)); border-radius: 2px; }
         
         .beta-warning-item {
-            margin-bottom: 12px;
-            padding-left: 15px;
+            margin-bottom: 14px;
+            padding-left: 20px;
             position: relative;
         }
         .beta-warning-item::before {
-            content: '🔺';
+            content: '⚡';
             position: absolute;
-            left: -5px;
+            left: 0;
             top: 1px;
-            font-size: 11px;
+            font-size: 12px;
+            color: var(--neon-blue);
+            text-shadow: 0 0 8px var(--neon-blue);
         }
         .beta-modal-btn {
-            background: linear-gradient(135deg, rgba(189, 0, 255, 0.3) 0%, rgba(0, 240, 255, 0.3) 100%);
+            background: linear-gradient(135deg, rgba(189, 0, 255, 0.4) 0%, rgba(0, 240, 255, 0.4) 100%);
             border: 1px solid var(--neon-blue);
             color: #ffffff;
-            padding: 12px 35px;
+            padding: 14px 45px;
             border-radius: 50px;
             font-size: 14px;
             font-weight: bold;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             cursor: pointer;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
             transition: all 0.3s ease;
         }
         .beta-modal-btn:hover {
             background: linear-gradient(135deg, rgba(189, 0, 255, 0.6) 0%, rgba(0, 240, 255, 0.6) 100%);
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.5), 0 0 10px var(--neon-purple);
-            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.6), 0 0 15px var(--neon-purple);
+            transform: scale(1.04);
         }
 
         /* 🎞️ 動畫擴充定義 */
+        @keyframes liquidEnchant {
+            0% { background-position: 0% 0%; transform: rotate(-15deg) scale(1); }
+            50% { background-position: 50% 100%; transform: rotate(-10deg) scale(1.1); }
+            100% { background-position: 100% 50%; transform: rotate(-20deg) scale(1); }
+        }
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 0 8px var(--neon-green); opacity: 0.8; }
-            50% { transform: scale(1.15); box-shadow: 0 0 18px var(--neon-green); opacity: 1; }
+            50% { transform: scale(1.2); box-shadow: 0 0 20px var(--neon-green); opacity: 1; }
             100% { transform: scale(1); box-shadow: 0 0 8px var(--neon-green); opacity: 0.8; }
         }
         @keyframes active-pulse {
             0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.4); }
-            100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
+            100% { box-shadow: 0 0 22px var(--neon-blue); }
         }
         @keyframes warning-pulse {
             from { transform: scale(1); opacity: 0.9; }
-            to { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 6px var(--neon-red)); }
+            to { transform: scale(1.03); opacity: 1; filter: drop-shadow(0 0 8px var(--neon-red)); }
         }
         @keyframes sweep {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
-        }
-        @keyframes modal-slide-in {
-            from { transform: translateY(30px); opacity: 0; filter: blur(10px); }
-            to { transform: translateY(0); opacity: 1; filter: blur(0); }
-        }
-        @keyframes modal-scan {
-            0% { top: -100%; }
-            100% { top: 100%; }
         }
     </style>
 
@@ -440,26 +470,26 @@
 <body>
 
     <div id="beta-modal-overlay">
-        <div class="beta-modal-panel">
+        <div class="beta-modal-panel enchanted-glass">
             <div class="beta-modal-title">BETA 測試版本使用協定</div>
             <div class="beta-modal-content">
-                <div style="text-align: center; color: #fff; margin-bottom: 15px; font-weight: bold;">歡迎來到 Pixel Wars 量子矩陣測試場</div>
-                <div class="beta-warning-item">本網頁目前處於 Beta 核心測試階段，部分運算系統可能尚未完全最佳化。</div>
+                <div style="text-align: center; color: #fff; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px;">歡迎來到 Pixel Wars 量子矩陣測試場</div>
+                <div class="beta-warning-item">本網頁目前處於 Beta 核心測試階段，部分運算系統與動態渲染可能尚未完全最佳化。</div>
                 <div class="beta-warning-item">畫布資料與伺服器保持即時同步，測試期間可能會因伺服器維護或資料庫架構調整，不定時進行「像素世界線重刷（清空歷史數據）」。</div>
                 <div class="beta-warning-item">極少數情況下，若網路同步產生波動，可能會發生畫面渲染延遲或像素點丟失。</div>
                 <div class="beta-warning-item">開發團隊保留對冷卻機制（Cooldown）及色彩權限隨時修正與終止的權利。</div>
-                <div style="color: var(--neon-blue); margin-top: 15px; font-size: 13px; text-align: center;">感謝您參與本次同步，有任何 Bug 請至 Discord 異常回報。</div>
+                <div style="color: var(--neon-blue); margin-top: 15px; font-size: 13px; text-align: center; font-weight: 500;">感謝您參與本次同步，有任何 Bug 請至 Discord 異常回報。</div>
             </div>
             <button class="beta-modal-btn" id="close-beta-btn">同意並接入核心</button>
         </div>
     </div>
 
-    <div id="ui-stats">
+    <div id="ui-stats" class="enchanted-glass">
         <div class="stat-item"><span class="dot-online"></span> 即時在線：<span id="online-count">0</span> 人</div>
         <div class="stat-item"><span class="dot-views"></span> 總瀏覽量：<span id="view-count">0</span> 次</div>
     </div>
 
-    <div id="ui-top">
+    <div id="ui-top" class="enchanted-glass">
         <h1>Pixel Wars 像素戰爭 (Beta)</h1>
         <p id="status">正在同步量子矩陣伺服器連線...</p>
     </div>
@@ -471,7 +501,7 @@
     </div>
 
     <div id="ui-bottom">
-        <div class="palette" id="palette">
+        <div class="palette enchanted-glass" id="palette">
             <div class="color-btn active" style="background-color: #000000;" data-color="#000000"></div>
             <div class="color-btn" style="background-color: #ffffff; border: 1px solid #7f8c8d;" data-color="#ffffff"></div>
             <div class="color-btn" style="background-color: #e50000;" data-color="#e50000"></div>
@@ -488,11 +518,12 @@
 
     <a href="https://discord.gg/RSbvaExgfX" target="_blank" id="discord-btn" title="加入官方 Discord 頻道">
         <svg viewBox="0 0 127.14 96.36">
-            <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.84-11.12,68.43,68.43,0,0,1-10.75-5.18c.91-.66,1.8-1.34,2.65-2a75.58,75.58,0,0,0,72.7,0c.85.69,1.74,1.37,2.65,2a68.43,68.43,0,0,1-10.75,5.18,74.37,74.37,0,0,0,6.84,11.12,105.73,105.73,0,0,0,31.6-18.83C129.56,49.63,123.63,26.83,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/>
+            <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a74.37,74.37,0,0,0,6.84-11.12,68.43,68.43,0,0,1-10.75-5.18c.91-.66,1.8-1.34,2.65-2a75.58,75.58,0,0,0,72.7,0c.85.69,1.74,1.37,2.65,2a68.43,68.43,0,0,1-10.75,5.18,74.37,74.37,0,0,0,6.8411.12,105.73,105.73,0,0,0,31.6-18.83C129.56,49.63,123.63,26.83,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/>
         </svg>
     </a>
 
     <script>
+        // 📡 Firebase 帳據與配置初始化
         const firebaseConfig = {
             apiKey: "AIzaSyCBdgYtNIFl21qObobpNCVsovzrAoPPUv8",
             authDomain: "my-pixel-wars.firebaseapp.com",
@@ -515,11 +546,11 @@
         function triggerHaptic(type) {
             if (navigator.vibrate) {
                 if (type === 'click') {
-                    navigator.vibrate(12); // 切換色彩時的輕微短震
+                    navigator.vibrate(12); // 切換色彩時的微震
                 } else if (type === 'success') {
-                    navigator.vibrate([20, 30, 20]); // 成功放置像素點的精密雙震
+                    navigator.vibrate([20, 30, 20]); // 成功放置像素點
                 } else if (type === 'warning') {
-                    navigator.vibrate([60, 50, 60]); // 冷卻中點擊失敗的警示重震
+                    navigator.vibrate([60, 50, 60]); // 警示重震
                 }
             }
         }
@@ -529,13 +560,14 @@
         const closeBetaBtn = document.getElementById('close-beta-btn');
         
         closeBetaBtn.addEventListener('click', () => {
-            triggerHaptic('click'); // 點擊同意時觸發輕微震動
+            triggerHaptic('click');
             betaOverlay.style.opacity = '0';
             setTimeout(() => {
                 betaOverlay.style.display = 'none';
-            }, 500); // 動畫結束後徹底隱藏
+            }, 500);
         });
 
+        // 📊 統計數據連線邏輯
         db.ref('stats/totalViews').on('value', (snap) => {
             if(snap.exists()) viewCountEl.innerText = snap.val();
         });
@@ -559,6 +591,7 @@
             }
         });
 
+        // 🕹️ 畫布渲染與拖拽縮放引擎
         const viewport = document.getElementById('viewport');
         const wrapper = document.getElementById('canvas-wrapper');
         const canvas = document.getElementById('pixelCanvas');
@@ -631,6 +664,7 @@
             wrapper.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
         }
 
+        // 🔄 即時監聽遠端像素點變更
         pixelsRef.on('child_added', (snapshot) => {
             const key = snapshot.key;
             const data = snapshot.val();
@@ -652,7 +686,7 @@
         }
 
         function startCooldown() {
-            cooldownEndTime = Date.now() + (1 * 1000);
+            cooldownEndTime = Date.now() + (1 * 1000); // 1秒冷卻
             localStorage.setItem('pixelCooldownEnd', cooldownEndTime);
             updateStatusText();
         }
@@ -672,7 +706,7 @@
 
         function tryPlacePixel(clickX, clickY) {
             if (Date.now() < cooldownEndTime) {
-                triggerHaptic('warning'); // 震動：冷卻失敗警告
+                triggerHaptic('warning');
                 alert(`核心冷卻中！請等待倒數結束。`);
                 return;
             }
@@ -682,7 +716,7 @@
                     color: selectedColor,
                     timestamp: ServerValue.TIMESTAMP
                 }).then(() => {
-                    triggerHaptic('success'); // 震動：成功放置像素點
+                    triggerHaptic('success');
                     startCooldown();
                 }).catch((error) => {
                     console.error("傳輸失敗：", error);
@@ -692,6 +726,7 @@
 
         const ServerValue = firebase.database.ServerValue;
 
+        // 🖱️ 滑鼠操作監聽
         viewport.addEventListener('mousedown', (e) => {
             if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
             isDragging = true;
@@ -719,7 +754,7 @@
         });
 
         viewport.addEventListener('wheel', (e) => {
-            if(betaOverlay.style.display !== 'none') return; // 彈窗顯示時禁止縮放畫布
+            if(betaOverlay.style.display !== 'none') return; 
             e.preventDefault();
             const zoomFactor = 1.2;
             const mouseX = e.clientX;
@@ -736,6 +771,7 @@
             requestRender();
         }, { passive: false });
 
+        // 📱 手機觸控操作監聽（RWD 核心優化）
         viewport.addEventListener('touchstart', (e) => {
             if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
             if (e.touches.length === 1) {
@@ -755,7 +791,7 @@
 
         viewport.addEventListener('touchmove', (e) => {
             if (e.target === palette || e.target.closest('.color-btn') || e.target === customColorLabel || e.target.closest('.beta-modal-panel')) return;
-            if(betaOverlay.style.display !== 'none') return; // 彈窗顯示時禁止拖拽
+            if(betaOverlay.style.display !== 'none') return; 
             e.preventDefault();
             if (e.touches.length === 1 && isDragging) {
                 isPanning = true;
@@ -790,9 +826,10 @@
             isDragging = false;
         });
 
+        // 🎨 色彩控制事件
         palette.addEventListener('click', (e) => {
             if (e.target.classList.contains('color-btn')) {
-                triggerHaptic('click'); // 震動：切換一般顏色
+                triggerHaptic('click');
                 const activeBtn = document.querySelector('.color-btn.active') || document.querySelector('.color-custom-label.active');
                 if (activeBtn) activeBtn.classList.remove('active');
                 e.target.classList.add('active');
@@ -809,7 +846,7 @@
         });
         
         customColorLabel.addEventListener('click', () => {
-            triggerHaptic('click'); // 震動：點擊自訂色彩系統
+            triggerHaptic('click');
             const activeBtn = document.querySelector('.color-btn.active') || document.querySelector('.color-custom-label.active');
             if (activeBtn) activeBtn.classList.remove('active');
             customColorLabel.classList.add('active');
@@ -819,6 +856,7 @@
         window.addEventListener('resize', () => { requestRender(); });
         centerCanvas();
 
+        // 🔒 安全機制：全面禁用手機端長
         document.addEventListener('contextmenu', (e) => { e.preventDefault(); });
         document.addEventListener('keydown', (e) => {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
